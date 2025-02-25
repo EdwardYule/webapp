@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Convert SVG to PNG</title>
+</head>
+<body>
+    <h1>SVG to PNG Converter</h1>
+    <canvas id="canvas192" width="192" height="192" style="display:none;"></canvas>
+    <canvas id="canvas512" width="512" height="512" style="display:none;"></canvas>
+    
+    <script>
+        function loadSVG(url) {
+            return fetch(url)
+                .then(response => response.text());
+        }
+
+        function svgToPng(svgText, canvas) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                const blob = new Blob([svgText], { type: 'image/svg+xml' });
+                const url = URL.createObjectURL(blob);
+                
+                img.onload = () => {
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+                    URL.revokeObjectURL(url);
+                    
+                    // 触发下载
+                    const link = document.createElement('a');
+                    link.download = `icon-${canvas.width}x${canvas.height}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                    
+                    resolve();
+                };
+                
+                img.src = url;
+            });
+        }
+
+        // 转换两个图标
+        Promise.all([
+            loadSVG('icons/icon-192x192.svg').then(svg => 
+                svgToPng(svg, document.getElementById('canvas192'))
+            ),
+            loadSVG('icons/icon-512x512.svg').then(svg => 
+                svgToPng(svg, document.getElementById('canvas512'))
+            )
+        ]).then(() => {
+            document.body.innerHTML += '<p>转换完成！请检查下载的文件。</p>';
+        });
+    </script>
+</body>
+</html> 

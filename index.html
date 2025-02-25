@@ -1,1 +1,25 @@
-test
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>简单 PWA 示例</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2196f3">
+    <link rel="icon" href="icons/icon-192x192.png">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+</head>
+<body>
+    <div class="container">
+        <h1>我的第一个 PWA 应用</h1>
+        <div class="content">
+            <p>这是一个简单的 PWA 应用示例</p>
+            <p>你可以将它添加到主屏幕</p>
+            <p id="status">在线状态: 在线</p>
+        </div>
+        <button id="refreshBtn">刷新页面</button>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
