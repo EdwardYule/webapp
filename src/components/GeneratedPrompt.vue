@@ -1,6 +1,11 @@
 <template>
   <div class="generated-prompt-container">
-    <label for="generatedPrompt">生成的提示词：</label>
+    <div class="label-container">
+      <label for="generatedPrompt">生成的提示词：</label>
+      <button class="copy-button" @click="copyToClipboard" :title="isCopied ? '已复制!' : '复制到剪贴板'">
+        <i class="fas" :class="isCopied ? 'fa-check' : 'fa-copy'"></i>
+      </button>
+    </div>
     <textarea 
       id="generatedPrompt" 
       :value="generatedPrompt" 
@@ -12,7 +17,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from 'vue'
+import { defineComponent, computed, ref } from 'vue'
 
 interface FormData {
   languageStyle: string
@@ -31,6 +36,8 @@ export default defineComponent({
     }
   },
   setup(props) {
+    const isCopied = ref(false)
+
     const generatedPrompt = computed(() => {
       const { languageStyle, context, outputFormat, role, question } = props.formData
       let prompt = ''
@@ -63,8 +70,22 @@ export default defineComponent({
       return prompt.trim()
     })
 
+    const copyToClipboard = async () => {
+      try {
+        await navigator.clipboard.writeText(generatedPrompt.value)
+        isCopied.value = true
+        setTimeout(() => {
+          isCopied.value = false
+        }, 2000)
+      } catch (err) {
+        console.error('复制失败:', err)
+      }
+    }
+
     return {
-      generatedPrompt
+      generatedPrompt,
+      copyToClipboard,
+      isCopied
     }
   }
 })
@@ -77,6 +98,12 @@ export default defineComponent({
   gap: 10px;
   width: 100%;
   height: 100%;
+}
+
+.label-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .generated-prompt {
@@ -92,5 +119,28 @@ export default defineComponent({
 
 label {
   font-weight: bold;
+}
+
+.copy-button {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  padding: 4px 8px;
+  font-size: 16px;
+  border-radius: 4px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.copy-button:hover {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.copy-button:active {
+  transform: scale(0.95);
 }
 </style>
