@@ -1,6 +1,6 @@
 <!-- HomeView Mobile -->
 <template>
-  <div class="home-mobile">
+  <div class="home-mobile" :style="{ height: containerHeight + 'px' }">
     <div class="content">
       <div v-if="currentTab === 'home'" class="home-tab">
         <MessageList />
@@ -32,7 +32,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, onMounted, onUnmounted } from 'vue'
 import MessageList from '@/components/MessageList.vue'
 
 export default defineComponent({
@@ -42,9 +42,23 @@ export default defineComponent({
   },
   setup() {
     const currentTab = ref('home')
+    const containerHeight = ref(document.documentElement.clientHeight)
+
+    const updateHeight = () => {
+      containerHeight.value = document.documentElement.clientHeight
+    }
+
+    onMounted(() => {
+      window.addEventListener('resize', updateHeight)
+    })
+
+    onUnmounted(() => {
+      window.removeEventListener('resize', updateHeight)
+    })
 
     return {
-      currentTab
+      currentTab,
+      containerHeight
     }
   }
 })
@@ -52,7 +66,6 @@ export default defineComponent({
 
 <style scoped>
 .home-mobile {
-  height: 100vh;
   display: flex;
   flex-direction: column;
   position: fixed;
