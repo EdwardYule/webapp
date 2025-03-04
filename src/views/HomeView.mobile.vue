@@ -1,10 +1,9 @@
 <!-- HomeView Mobile -->
 <template>
   <div class="home-mobile">
-    <!-- 主要内容区域将在这里重新设计 -->
     <div class="content">
       <div v-if="currentTab === 'home'" class="home-tab">
-        <!-- 首页内容将在这里重新设计 -->
+        <MessageList />
       </div>
       <div v-else-if="currentTab === 'history'" class="history-tab">
         <!-- 历史记录内容将在这里重新设计 -->
@@ -34,9 +33,13 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
+import MessageList from '@/components/MessageList.vue'
 
 export default defineComponent({
   name: 'HomeViewMobile',
+  components: {
+    MessageList
+  },
   setup() {
     const currentTab = ref('home')
 
@@ -52,11 +55,24 @@ export default defineComponent({
   height: 100vh;
   display: flex;
   flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
 }
 
 .content {
   flex: 1;
-  overflow: auto;
+  overflow: hidden;
+  position: relative;
+}
+
+.home-tab {
+  height: 100%;
 }
 
 /* 标签栏样式 */
@@ -89,7 +105,6 @@ export default defineComponent({
 }
 
 /* 标签页内容区域样式 */
-.home-tab,
 .history-tab,
 .mine-tab {
   height: 100%;
