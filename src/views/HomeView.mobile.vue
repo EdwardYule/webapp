@@ -1,29 +1,22 @@
 <!-- HomeView Mobile -->
 <template>
   <div class="home-mobile" :style="{ height: containerHeight + 'px' }">
+    <!-- 使用router-view替换条件渲染的内容 -->
     <div class="content">
-      <div v-if="currentTab === 'home'" class="home-tab">
-        <MessageList />
-      </div>
-      <div v-else-if="currentTab === 'history'" class="history-tab">
-        <!-- 历史记录内容将在这里重新设计 -->
-      </div>
-      <div v-else-if="currentTab === 'mine'" class="mine-tab">
-        <!-- 个人中心内容将在这里重新设计 -->
-      </div>
+      <router-view></router-view>
     </div>
     
     <!-- 底部标签栏 -->
     <div class="tab-bar">
-      <div class="tab-item" :class="{ active: currentTab === 'home' }" @click="currentTab = 'home'">
+      <div class="tab-item" :class="{ active: isCurrentRoute('') }" @click="navigateTo('')">
         <i class="fas fa-home"></i>
         <span>首页</span>
       </div>
-      <div class="tab-item" :class="{ active: currentTab === 'history' }" @click="currentTab = 'history'">
-        <i class="fas fa-history"></i>
-        <span>历史</span>
+      <div class="tab-item" :class="{ active: isCurrentRoute('presets') }" @click="navigateTo('presets')">
+        <i class="fas fa-list-alt"></i>
+        <span>预设</span>
       </div>
-      <div class="tab-item" :class="{ active: currentTab === 'mine' }" @click="currentTab = 'mine'">
+      <div class="tab-item" :class="{ active: isCurrentRoute('profile') }" @click="navigateTo('profile')">
         <i class="fas fa-user"></i>
         <span>我的</span>
       </div>
@@ -33,19 +26,25 @@
 
 <script lang="ts">
 import { defineComponent, ref, onMounted, onUnmounted } from 'vue'
-import MessageList from '@/components/MessageList.vue'
+import { useRouter, useRoute } from 'vue-router'
 
 export default defineComponent({
   name: 'HomeViewMobile',
-  components: {
-    MessageList
-  },
   setup() {
-    const currentTab = ref('home')
+    const router = useRouter()
+    const route = useRoute()
     const containerHeight = ref(document.documentElement.clientHeight)
 
     const updateHeight = () => {
       containerHeight.value = document.documentElement.clientHeight
+    }
+
+    const navigateTo = (path: string) => {
+      router.push('/' + path)
+    }
+
+    const isCurrentRoute = (path: string) => {
+      return route.path === '/' + path
     }
 
     onMounted(() => {
@@ -57,8 +56,9 @@ export default defineComponent({
     })
 
     return {
-      currentTab,
-      containerHeight
+      containerHeight,
+      navigateTo,
+      isCurrentRoute
     }
   }
 })
@@ -121,5 +121,31 @@ export default defineComponent({
 .history-tab,
 .mine-tab {
   height: 100%;
+}
+
+.preset-tab {
+  height: 100%;
+  position: relative;
+}
+
+.floating-button {
+  position: fixed;
+  right: 20px;
+  bottom: 76px;
+  width: 56px;
+  height: 56px;
+  border-radius: 28px;
+  background-color: #4CAF50;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  z-index: 100;
+}
+
+.floating-button i {
+  font-size: 24px;
 }
 </style>
